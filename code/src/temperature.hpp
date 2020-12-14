@@ -18,8 +18,9 @@ class Temperature {
     double T1, T2;
 
     Temperature();
-    void init();
+
     void update();
+    String toString();
 };
 
 #endif

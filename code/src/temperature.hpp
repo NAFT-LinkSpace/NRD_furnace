@@ -10,17 +10,15 @@ class Temperature {
    private:
     Adafruit_MAX31855 themocouple0;
     Adafruit_MAX31855 themocouple1;
-
-    // Adafruit_MAX31855 themocouple0(CLK, CS0, DO);
-    // Adafruit_MAX31855 themocouple1(CLK, CS1, DO);
+    Adafruit_MAX31855 themocouple2;
 
    public:
-    double T1, T2;
+    double T0, T1, T2;
 
     Temperature();
-
+    void begin();
     void update();
-    String toString();
+    String toString(const String delim = ",");
 };
 
 #endif

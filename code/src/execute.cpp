@@ -1,19 +1,24 @@
 #include "execute.hpp"
 
-void execute_Default(Container con) {
-    return;
-}
+// void executeInit() {
 
-void execute_READ_TEMP(Container con) {
-    // writeSerial("read_temp");
-    writeSerial(con.toString());
-}
-void execute_SET_TEMP(Container con) {
-}
-void execute_SET_DUTY(Container con) {
-    // writeSerial("set_duty");
-    setPwm(con.duty);
-}
+// }
+// void execute_Default(const Container& con) {
+//     return;
+// }
+
+// void execute_READ_TEMP(const Container& con) {
+//     // writeSerial("read_temp");
+//     Serial.println(con.toString());
+// }
+// void execute_SET_TEMP(const Container& con) {
+// }
+// void execute_SET_DUTY(const Container& con) {
+//     // writeSerial("set_duty");
+//     // setPWM(con.duty);
+// }
+// void execute_CONTROL(const Container& con) {
+// }
 
 // Strategy::Strategy() {
 //     init();

@@ -2,12 +2,13 @@
 #define PIN_HEADER_FILE
 // namespace PINS {
 
-const int DO = 4;
-const int CS0 = 6;
-const int CS1 = 5;
-const int CLK = 3;
-const int PWMOUT = 9;
-const int BUTTON = 8;
+constexpr int DO = 4;
+constexpr int CS0 = 6;
+constexpr int CS1 = 5;
+constexpr int CS2 = 7;
+constexpr int CLK = 3;
+constexpr int PWMOUT = 13;
+// constexpr int BUTTON = 8;
 
 // }  // namespace PINS
 

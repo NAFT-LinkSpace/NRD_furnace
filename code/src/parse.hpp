@@ -47,7 +47,6 @@ class Parser {
     // return operator ,operand as parameter
     const ParseResult<OPEAND_BUF_SIZE>& parse(const String src) {
         clearBuffer();
-        Serial.println("src" + src);
         unsigned int buf_assined_size = split(src, str_buf, str_buf_size, delim_);
 
         // check assigned size

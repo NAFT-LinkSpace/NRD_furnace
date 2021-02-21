@@ -6,8 +6,9 @@ namespace keyword {
 // command
 const String SET_TEMP = "SET_TEMP";
 // const String READ_STATUS = "READ_STATUS";
-const String SET_DUTY = "SET_DUTY";
-const String START_CONTROL = "START_CONTROL";
+// const String SET_DUTY = "SET_DUTY";
+const String SET_DUTY = "1";
+const String START_CONTROL = "2";
 
 }  // namespace keyword
 

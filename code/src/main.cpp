@@ -15,5 +15,5 @@ void loop() {
 
     auto input_con = input();
     convert(input_con);
-    delay(100);
+    delay(1000);
 }

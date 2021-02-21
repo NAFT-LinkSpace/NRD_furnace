@@ -12,6 +12,9 @@ class State {
     virtual void output(const OutputContainer& out) {
         return;
     }
+    virtual const String toString() const {
+        return "default";
+    }
 };
 
 class Control : public State {
@@ -32,6 +35,9 @@ class Control : public State {
     void output(const OutputContainer& out) override {
         const double d = duty(out.common_.now_ms, out.skip_time_s, out.common_.current_tempT0, out.common_.current_tempT1, out.common_.current_tempT2);
         setLongPeriodPWM(d, PWM_PERIOD_ms, out.common_.now_ms);
+    }
+    const String toString() const override {
+        return "Control";
     }
 
    private:
@@ -54,6 +60,9 @@ class ConstPWM : public State {
    public:
     void output(const OutputContainer& out) override {
         setLongPeriodPWM(out.duty_per, PWM_PERIOD_ms, out.common_.now_ms);
+    }
+    const String toString() const override {
+        return "ConstPWM";
     }
 };
 #endif  // STATE_HEADER_FILE

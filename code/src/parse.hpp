@@ -21,7 +21,7 @@ struct ParseResult {
             operand[i] = 0.0;
         }
     }
-    const String toString() const override {
+    const String toString() const {
         String s = toStringHelper("type", "ParseResult");
         s += toStringHelper("operator_", operator_);
         s += toStringHelper("operand", operand, operand_size);

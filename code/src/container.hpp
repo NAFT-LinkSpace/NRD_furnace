@@ -2,6 +2,12 @@
 #define CONTAINER_HEAEDER_FILE
 
 #include <Arduino.h>
+
+#include "Stringer.hpp"
+#include "parse.hpp"
+// template <typename T>
+// String toStringHelper(const String s, const T t);
+
 struct CommonContainer {
     unsigned long now_ms;
     double current_tempT0;  //[℃]
@@ -9,10 +15,17 @@ struct CommonContainer {
     double current_tempT2;  //[℃]
 
     const String toString() const {
-        return "now_ms" + String(now_ms) +
-               "current temp T0:" + String(current_tempT1) +
-               "T1:" + String(current_tempT2) +
-               "T2" + String(current_tempT2);
+        return toStringHelper("now_ms", now_ms) +
+               toStringHelper("current temp T0", current_tempT0) +
+               toStringHelper("T1", current_tempT1) +
+               toStringHelper("T2", current_tempT2);
+    }
+
+    void init() {
+        now_ms = 0;
+        current_tempT0 = 0.0;
+        current_tempT1 = 0.0;
+        current_tempT2 = 0.0;
     }
 };
 struct InputContainer {
@@ -20,12 +33,16 @@ struct InputContainer {
     // String command;
     String message;
 
-    int bottun_count;
+    unsigned int bottun_count;
     CommonContainer common_;
 
     const String toString() const {
-        return "message:" + message +
-               "bottun count" + String(bottun_count);
+        return toStringHelper("message", message) +
+               toStringHelper("button count", bottun_count);
+    }
+    void init() {
+        message = "";
+        bottun_count = 0;
     }
 };
 
@@ -36,18 +53,20 @@ class OutputContainer {
 
     double duty_per;  //[%]
     double skip_time_s;
-    bool control_on = false;
+    // bool control_on = false;
 
-    void update(const CommonContainer& common) {
-        common_ = common;
+    void update(const InputContainer& input) {
+        common_ = input.common_;
     }
     // const String toString() const;
 
     const String toString() const {
-        return "duty" + String(duty_per) +
+        return toStringHelper("duty_per", duty_per) +
                //    "target_temp" + String(target_temp) +
-               "skip_time_s" + String(skip_time_s) +
-               "control on" + String(control_on);
+               toStringHelper("skip_time_s", skip_time_s)
+            // +
+            //    toStringHelper("control on", control_on)
+            ;
     }
 };
 

@@ -6,8 +6,6 @@
 #include "parse.hpp"
 #include "state.hpp"
 
-
-
 // client
 class Context {
    private:
@@ -34,7 +32,7 @@ class Context {
     void update(const InputContainer& input) {
         out_.update(input);
         auto parsed = parser_.parse(input.message);
-        Serial.println(toStringHelper("parsed", parsed.toString()));
+        // Serial.println(toStringHelper("parsed", parsed.toString()));
 
         if (!parsed.parsable) {
             Serial.println("not parsable");
@@ -69,15 +67,12 @@ class Context {
             changeState(control_);
         }
     }
-    void useState() {
+    void useState(const InputContainer& input) {
+        Serial.print(input.toString());
         Serial.print(out_.common_.toString());
-        // Serial.print(state_.toString());
         Serial.print(state_->toString());
-
-        // Serial.print(input.toString());
         Serial.print(out_.toString());
 
-        // state_.output(out_);
         state_->output(out_);
     }
 };

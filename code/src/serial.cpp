@@ -1,7 +1,5 @@
 #include "serial.hpp"
 
-const int buflen = 5;
-
 void setupSerial(const unsigned long baud) {
     Serial.begin(baud);
 }

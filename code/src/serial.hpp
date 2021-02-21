@@ -12,5 +12,5 @@ String readSerial();
 // void writeSerial(const String str);
 void rmCRLF(String& s);
 
-int split(const String s, const int slen, String* dst, const int dstsize, const char delim = ',');
+
 #endif

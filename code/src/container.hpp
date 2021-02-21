@@ -37,7 +37,7 @@ struct InputContainer {
     CommonContainer common_;
 
     const String toString() const {
-        return toStringHelper("message", message) +
+        return toStringHelper("message", "\"" + message + "\"") +
                toStringHelper("button count", bottun_count);
     }
     void init() {

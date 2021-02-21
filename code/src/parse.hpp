@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "Stringer.hpp"
 #include "keyword.hpp"
 
 template <int OPERAND_BUF_SIZE>
@@ -20,13 +21,11 @@ struct ParseResult {
             operand[i] = 0.0;
         }
     }
-    String toString() {
-        String s = "parseResult:";
-        s += operator_ + " ";
-        for (unsigned int i = 0; i < max_operand_size; i++) {
-            s += String(operand[i]) + " ";
-        }
-        s += "oprandsize " + String(operand_size);
+    const String toString() const override {
+        String s = toStringHelper("type", "ParseResult");
+        s += toStringHelper("operator_", operator_);
+        s += toStringHelper("operand", operand, operand_size);
+        s += toStringHelper("operand_size", operand_size);
         return s;
     }
 };

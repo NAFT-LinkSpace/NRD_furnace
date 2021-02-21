@@ -2,6 +2,7 @@
 #define STATE_HEADER_FILE
 
 #include "PID.hpp"
+#include "Stringer.hpp"
 #include "container.hpp"
 #include "control_parameter.hpp"
 #include "pincontrol.hpp"
@@ -9,11 +10,15 @@
 
 class State {
    public:
+    State() {
+        pinControlBegin();
+    }
+
     virtual void output(const OutputContainer& out) {
         return;
     }
     virtual const String toString() const {
-        return "default";
+        return toStringHelper("State", "default");
     }
 };
 
@@ -26,7 +31,7 @@ class Control : public State {
     // unsigned long control_start_ms_;
 
    public:
-    explicit Control() {
+    Control() {
         is_control_finished = false;
         vpid.init();
         vpid.setGain(Kp, Ki, Kd);
@@ -37,7 +42,7 @@ class Control : public State {
         setLongPeriodPWM(d, PWM_PERIOD_ms, out.common_.now_ms);
     }
     const String toString() const override {
-        return "Control";
+        return toStringHelper("State", "Control");
     }
 
    private:
@@ -62,7 +67,7 @@ class ConstPWM : public State {
         setLongPeriodPWM(out.duty_per, PWM_PERIOD_ms, out.common_.now_ms);
     }
     const String toString() const override {
-        return "ConstPWM";
+        return toStringHelper("State", "ConstPWM");
     }
 };
 #endif  // STATE_HEADER_FILE

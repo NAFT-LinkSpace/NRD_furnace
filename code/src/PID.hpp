@@ -8,18 +8,43 @@
 // inexact differential
 class VelocityPID {
    public:
-    VelocityPID();
-    void init();
+    VelocityPID() {
+        init();
+    }
 
-    void setGain(double Kp, double Ki, double Kd);
+    void init() {
+        Kp_ = Ti_ = Td_ = 0.0;
+        error_n_1 = error_n_2 = 0.0;
+        pre_MV = 0.0;
+        pre_deltaMV_d = 0.0;
+    }
 
-    double output(const double error, const unsigned long now_ms);
+    void setGain(double Kp, double Ki, double Kd) {
+        Kp_ = Kp;
+        Ti_ = Kp / Ki;
+        Td_ = Kd / Kp;
+    }
+    // MV:操作量
+    double output(const double error, const double elasped_time_s) {
+        double dt = elasped_time_s;
+
+        double deltaMV_d = Td_ / (ita_cutoff * Td_ + dt) * (ita_cutoff * pre_deltaMV_d + error - 2 * error_n_1 + error_n_2);
+        double MV = pre_MV + Kp_ * (error - error_n_1 + dt / Ti_ * error + deltaMV_d);
+
+        // update vals
+
+        error_n_2 = error_n_1;
+        error_n_1 = error;
+        pre_deltaMV_d = deltaMV_d;
+        pre_MV = MV;
+
+        return MV;
+    }
 
    private:
     double Kp_, Ti_, Td_;
 
     const double ita_cutoff = 0.125;
-    double pre_time_ms;
     double error_n_1, error_n_2;
     double pre_deltaMV_d;
     double pre_MV;

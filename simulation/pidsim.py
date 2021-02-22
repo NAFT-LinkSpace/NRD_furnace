@@ -2,68 +2,119 @@ from control import matlab
 from matplotlib import pyplot as plt
 import numpy as np
 
-A = 0.7
-tau = 2000
-# alpha = -1
-# beta = -2
+
+class PlotManager:
+    def __init__(self):
+        _fig, self.ax = plt.subplots()
+
+    def set_step_response_of_Tf(self, Tf, time_array, label):
+        # (y_array, self.time_array) = matlab.step(Tf, time_array)
+        # self.ax.plot(self.time_array, y_array, label=label)
+        self.set_impulse_response_of_Tf(
+            Tf * matlab.tf([1], [1, 0]), time_array=time_array, label=label
+        )
+
+    def set_impulse_response_of_Tf(self, Tf, time_array, label):
+        (y_array, self.time_array) = matlab.impulse(Tf, time_array)
+        self.ax.plot(self.time_array, y_array, label=label)
+
+    def set_label(self, ylabel):
+        self.ax.set(xlabel="t[s]", ylabel=ylabel)
+        self.ax.legend()
+
+    def set_title(self, title):
+        self.ax.set_title(title)
 
 
-# Ki = alpha * beta * (tau + A * Kd) / A
-# Kp = -((tau + A * Kd) * (alpha + beta) - 1) / A
-L = 40
-R = A / (tau - L)
+def printhelper(tag, s):
+    print(tag, ":", s, ",")
 
-# step response
-# Kp 84.0 Ki 0.04285714285714286 Kd 1680.0
 
-Kp = 1.2 / (R * L)
-Ki = Kp / (tau - L)
-Kd = Kp * (0.5 * L)
+# Cs:control TranferFunction
+# Ps:target TranferFunction
+# Gs:total TranferFunction
+def simulate(Cs, Ps, Gs, target_input_tf, trange, title_prefix):
 
-print("Kp", Kp, "Ki", Ki, "Kd", Kd)
+    printhelper("target_input_tf", target_input_tf)
+    LPF_tf = matlab.tf([1], [5, 1])
+    pm_temperature = PlotManager()
 
-# Cs = Kp + Ki / s + Kd * s
-Cs = matlab.tf([Kd, Kp, Ki], [1, 0])
-Ps = matlab.tf([A], [tau, 1])
+    pm_temperature.set_impulse_response_of_Tf(
+        Ps * target_input_tf, trange, "no control Tout"
+    )
+    pm_temperature.set_impulse_response_of_Tf(
+        Gs * target_input_tf, trange, "control Tout"
+    )
+    pm_temperature.set_impulse_response_of_Tf(
+        Gs * LPF_tf * target_input_tf, trange, "LPF control Tout"
+    )
+    # pm_temperature.set_impulse_response_of_Tf(1, trange, "unit step")
+    # pm_temperature.set_impulse_response_of_Tf(LPF_tf, trange, "LPF unit step")
+    pm_temperature.set_impulse_response_of_Tf(target_input_tf, trange, "target")
+    pm_temperature.set_label("T[Cels]")
+    pm_temperature.set_title(title_prefix + ":Temperature[Cels]")
 
-print("Cs", Cs, "Ps", Ps)
-# Gs = Cs * Ps / (1 + Cs * Ps)
-Gs = matlab.feedback(Cs * Ps, 1)
-# Gs = Cs
-print("Gs", Gs)
-print(matlab.margin(Gs))
+    pm_W = PlotManager()
 
-# input
-u = matlab.tf([1], [1, 0, 0])
-# u = 130
-# * matlab.tf([1], [1, 0])
+    control_out_tf = Cs / (1 + Cs * Ps)
+    pm_W.set_impulse_response_of_Tf(
+        control_out_tf * target_input_tf, trange, "control out"
+    )
+    pm_W.set_impulse_response_of_Tf(
+        control_out_tf * LPF_tf * target_input_tf, trange, "LPF control out"
+    )
+    pm_W.set_label("Q[W]")
+    pm_W.set_title(title_prefix + ":energy[W]")
 
-print("u", u)
-r = u * matlab.tf([1], [3, 1])
-# r = 130
-print("r", r)
 
-trange = np.arange(0, 50, 0.1)
-# trange = np.arange(0, 3000, 0.1)
+def main():
+    resistance_ohm = 57.3
+    satirated_temperature_cels = 150
+    L_delayed_s = 40  # 遅れ時間
+    temp_tau_s = 2000  # 全体を1次遅れとして見たときの時定数
 
-fig, ax = plt.subplots()
-(yout, T) = matlab.step(Gs * r, trange, input=15)
-ax.plot(T, yout, label="Tout")
+    tau_s = temp_tau_s - L_delayed_s  # 時定数
 
-(uin, T) = matlab.step(u, trange)
-ax.plot(T, uin, label="Tin")
+    input_to_system_W = 100 ** 2 / resistance_ohm
+    A_target_gain = satirated_temperature_cels / input_to_system_W
 
-cout, T = matlab.step(1 / (Cs * Ps) * r, trange)
-ax.plot(T, cout, label="Q")
+    # https://ja.wikipedia.org/wiki/PID%E5%88%B6%E5%BE%A1#CHR%E6%B3%95
 
-# matlab.bode(Gs)
-plt.ylim(0, 600)
-plt.legend()
-plt.show()
+    R_grad = A_target_gain / tau_s
+    Kp = 0.6 / (R_grad * L_delayed_s)
+    Ti = tau_s
+    Td = 0.5 * L_delayed_s
 
-# matlab.nyquist(Ps)
-# plt.show()
+    Ki = Kp / Ti
+    Kd = Kp * Td
 
-# trange = range(0, 500, 0.5)
-# plt.plot(trange, [ft(t) for t in trange])
-# plt.show()
+    printhelper("input_to_system_W", input_to_system_W)
+    printhelper("A_target_gain", A_target_gain)
+
+    printhelper("Kp", Kp)
+    printhelper("Ki", Ki)
+    printhelper("Kd", Kd)
+
+    # Cs = Kp + Ki / s + Kd * s
+    Cs = matlab.tf([Kd, Kp, Ki], [1, 0])
+    # Ps = A / (tau_s * s +1)
+    Ps = matlab.tf([A_target_gain], [tau_s, 1])
+
+    printhelper("Cs", Cs)
+    printhelper("Ps", Ps)
+
+    Gs = matlab.feedback(Cs * Ps)
+    print("Gs", Gs)
+
+    trange = np.arange(0, 60 * 5, 1)
+    target_input_tf = matlab.tf([3], [1, 0])
+    simulate(Cs, Ps, Gs, target_input_tf, trange, "step")
+
+    trange = np.arange(0, 60 * 20, 1)
+    target_input_tf = matlab.tf([2 / 60], [1, 0, 0])
+    simulate(Cs, Ps, Gs, target_input_tf, trange, "lamp")
+
+    plt.show()
+
+
+main()

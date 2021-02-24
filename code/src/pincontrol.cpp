@@ -22,7 +22,8 @@ const double satirate(double d, const double uplim, const double dowmlim) {
 }
 
 void setLongPeriodPWM(const double duty_percent, const unsigned long period_ms, const unsigned long now_ms) {
+    const double sati_duty = satirate(duty_percent,100,0);
     int nowv = (now_ms % period_ms) * 100 / period_ms;
-    digitalWrite(PWMOUT, nowv < duty_percent);
+    digitalWrite(PWMOUT, nowv < sati_duty);
     // Serial.println(nowv < duty_percent);
 }

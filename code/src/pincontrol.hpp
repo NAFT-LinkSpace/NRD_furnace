@@ -5,7 +5,7 @@
 
 #include "pin.hpp"
 void pinControlBegin();
-void setPWM(const double duty);
+void setPWM(const double duty_percent);
 void setLongPeriodPWM(const double duty_percent, const unsigned long period_ms, const unsigned long now_ms);
 
 const double satirate(double d, const double uplim, const double dowmlim);

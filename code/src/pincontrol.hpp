@@ -9,11 +9,11 @@ inline void pinControlBegin() {
     pinMode(PWMOUT, OUTPUT);
 }
 
-inline const double satirate(double d, const double uplim, const double dowmlim) {
-    if (d > uplim) {
-        return uplim;
-    } else if (d < dowmlim) {
-        return dowmlim;
+inline const double satirate(double d, const double max, const double min) {
+    if (d > max) {
+        return max;
+    } else if (d < min) {
+        return min;
     }
     return d;
 }

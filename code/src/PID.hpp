@@ -13,10 +13,9 @@ class VelocityPID {
     }
 
     void init() {
-        Kp_ = Ti_ = Td_ = 0.0;
         error_n_1 = error_n_2 = 0.0;
-        pre_MV = 0.0;
         pre_deltaMV_d = 0.0;
+        pre_MV = 0.0;
     }
 
     void setGain(double Kp, double Ki, double Kd) {

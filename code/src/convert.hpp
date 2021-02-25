@@ -21,29 +21,24 @@ class Context {
         state_ = &state;
     }
 
-   public:
-    Context() : parser_(' ')
-    // , state_(constpwm_)
-    {
-        // state_ = &control_;
-        changeState(constpwm_);
-    }
-
-    void update(const InputContainer& input) {
-        out_.update(input);
+    void parseInput(const InputContainer& input) {
+        if (input.message.length() == 0) {
+            return;
+        }
         auto parsed = parser_.parse(input.message);
-        // Serial.println(toStringHelper("parsed", parsed.toString()));
+        // out_.prompt += input.toString();
 
         if (!parsed.parsable) {
-            Serial.println("not parsable");
+            out_.error += "not parsable";
             return;
         }
 
         if (parsed.operator_ == keyword::SET_DUTY) {
             if (parsed.operand_size == 1) {
-                out_.duty_per = parsed.operand[0];
+                constpwm_.setDuty(parsed.operand[0]);
 
             } else {
+                out_.error += "not parsable";
                 return;
             }
             changeState(constpwm_);
@@ -51,29 +46,42 @@ class Context {
         } else if (parsed.operator_ == keyword::START_CONTROL) {
             // out.control_on = true;
             if (parsed.operand_size == 0) {
-                out_.skip_time_s = 0.0;
+                control_.startControl(input.common_.now_ms, 0.0);
 
             } else if (parsed.operand_size == 1) {
-                out_.skip_time_s = parsed.operand[0];
+                control_.startControl(input.common_.now_ms, parsed.operand[0]);
 
-            } else if (parsed.operand_size == 2) {
-                out_.skip_time_s = parsed.operand[0];
-                // out.target_temp = parsed.operand[1];
             } else {
-                Serial.println("not parsable");
+                out_.error += "not parsable";
                 return;
             }
-            out_.duty_per = 0.0;
+
             changeState(control_);
         }
     }
-    void useState(const InputContainer& input) {
-        Serial.print(input.toString());
-        Serial.print(out_.common_.toString());
-        Serial.print(state_->toString());
-        Serial.print(out_.toString());
 
-        state_->output(out_);
+   public:
+    Context() : parser_(' ') {
+        changeState(constpwm_);
+    }
+    void update(const InputContainer& input) {
+        out_.init();
+        parseInput(input);
+        state_->setOutput(out_, input.common_);
+
+        if (out_.error.length() != 0) {
+            Serial.println(toStringHelper("error", out_.error));
+        }
+        if (input.message.length() != 0) {
+            Serial.println(toStringHelper("message", "\"" + input.message + "\""));
+        }
+        if (input.common_.now_ms % 1000 < 5) {
+            // Serial.print(input.toString());
+            Serial.print(input.common_.toString());
+            Serial.print(out_.message);
+
+            Serial.println();
+        }
     }
 };
 void convert(const InputContainer& input);

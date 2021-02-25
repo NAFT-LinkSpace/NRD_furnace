@@ -30,15 +30,16 @@ struct CommonContainer {
 };
 struct InputContainer {
    public:
-    // String command;
     String message;
 
     unsigned int bottun_count;
     CommonContainer common_;
 
     const String toString() const {
-        return toStringHelper("message", "\"" + message + "\"") +
-               toStringHelper("button count", bottun_count);
+        return toStringHelper("message", "\"" + message + "\"")
+            // +
+            //    toStringHelper("button count", bottun_count)
+            ;
     }
     void init() {
         message = "";
@@ -48,25 +49,18 @@ struct InputContainer {
 
 class OutputContainer {
    public:
-    // InputContainer input_;
-    CommonContainer common_;
+    String message;
+    String error;
+    String prompt;
 
-    double duty_per;  //[%]
-    double skip_time_s;
-    // bool control_on = false;
-
-    void update(const InputContainer& input) {
-        common_ = input.common_;
+    void init() {
+        error = message = prompt = "";
     }
-    // const String toString() const;
 
     const String toString() const {
-        return toStringHelper("duty_per", duty_per) +
-               //    "target_temp" + String(target_temp) +
-               toStringHelper("skip_time_s", skip_time_s)
-            // +
-            //    toStringHelper("control on", control_on)
-            ;
+        return toStringHelper("error", error) +
+               toStringHelper("", message) +
+               toStringHelper("prompt", prompt);
     }
 };
 

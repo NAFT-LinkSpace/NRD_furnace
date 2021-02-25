@@ -23,4 +23,11 @@ inline const String toStringHelper(const String tag, const String& ss) {
     return tag + ":" + ss + ",";
 }
 
+inline const String toStringHelper(const String tag, const double d) {
+    static char s[10];
+    memset(s, 0, 10);
+    dtostrf(d, 3, 1, s);
+    return tag + ":" + String(s) + ",";
+}
+
 #endif  // STRINGER_HEADER_FILE

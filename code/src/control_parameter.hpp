@@ -2,29 +2,27 @@
 #if !defined(CONTROL_PARAMETER)
 #define CONTROL_PARAMETER
 
+#include <Arduino.h>
+
 constexpr double MAX_OUTPUT_ENERGY_W = 200;  //[J/s]
 constexpr unsigned long PWM_PERIOD_ms = 300;
 
 // PID gain
-// constexpr double Kp = 0.336;
-// constexpr double Ki = 0.000171;
-// constexpr double Kd = 6.72;
-
-constexpr double Kp = 34;
-constexpr double Ki = 0.017;
-constexpr double Kd = 684;
+constexpr double Kp = 39.468385018123236;
+constexpr double Ki = 0.02013693113169553;
+constexpr double Kd = 789.3677003624647;
 
 struct inflectionPoint {
     double time_s;
     double temp_cels;
 };
 
-static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {20 * 60, 40}, {30 * 60, 40}, {50 * 60, 20}};
+static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {10 * 60, 40}, {20 * 60, 40}, {30 * 60, 20}};
 // static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {20 * 2, 40}, {30 * 2, 40}, {50 * 2, 20}};
 
 // , {0, 80}, {0, 80}, {0, 0}, {0, 0}};
-inline double linear(const inflectionPoint t1, const inflectionPoint t2, const double etime_s) {
-    return (t2.temp_cels - t1.temp_cels) / (t2.time_s - t1.time_s) * (etime_s - t1.time_s) + t1.temp_cels;
+inline double linear(const inflectionPoint pre, const inflectionPoint next, const double etime_s) {
+    return map(etime_s - pre.time_s, pre.time_s, next.time_s, pre.temp_cels, next.temp_cels);
 }
 
 inline double targetFunction(const double elapsed_time_s, bool& is_end) {
@@ -53,12 +51,12 @@ inline double targetFunction(const double elapsed_time_s, bool& is_end) {
 }
 
 // test PID control
-inline double feedbackTemperature(const double T0, const double T1, const double T2, const double elasped_time_s) {
-    bool b;
-    return targetFunction(elasped_time_s, b) - 1.0;
-}
-
-//inline double feedbackTemperature(const double T0, const double T1, const double T2, const double elasped_time_s) {
-//     return T0;
+// inline double feedbackTemperature(const double T0, const double T1, const double T2, const double elasped_time_s) {
+//     bool b;
+//     return targetFunction(elasped_time_s, b) - 1.0;
 // }
+
+inline double feedbackTemperature(const double T0, const double T1, const double T2, const double elasped_time_s) {
+    return T1;
+}
 #endif  // CONTROL_PARAMETER

@@ -61,7 +61,7 @@ class Control : public State {
         }
         const double error = target_temp - feedbackTemperature(T0, T1, T2, elasped_time_s);  //error:target - current
         const double out_W = vpid.output(error, elasped_time_s);
-        const double duty_per = satirate(out_W / MAX_OUTPUT_ENERGY_W * 100, 100, 0);
+        const double duty_per = constrain(out_W / MAX_OUTPUT_ENERGY_W * 100, 0, 100);
 
         control_data +=
             toStringHelper("elasped[s]", elasped_time_s) +
@@ -86,7 +86,7 @@ class ConstPWM : public State {
         setLongPeriodPWM(duty_per_, PWM_PERIOD_ms, common.now_ms);
     }
     void setDuty(const double duty_per) {
-        duty_per_ = satirate(duty_per, 100, 0);
+        duty_per_ = constrain(duty_per, 0, 100);
     }
     const String toString() const override {
         return toStringHelper("State", "ConstPWM");

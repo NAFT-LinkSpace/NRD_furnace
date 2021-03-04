@@ -9,27 +9,16 @@ inline void pinControlBegin() {
     pinMode(PWMOUT, OUTPUT);
 }
 
-inline const double satirate(double d, const double max, const double min) {
-    if (d > max) {
-        return max;
-    } else if (d < min) {
-        return min;
-    }
-    return d;
-}
 inline void setPWM(const double duty_percent) {
-    // int tmp = satirate(duty, 1, 0) * 255;
-    int tmp = satirate(duty_percent, 100, 0) / 100 * 255;  //%
+    // int tmp = constrain(duty, 1, 0) * 255;
+    int tmp = constrain(duty_percent, 0, 100) / 100 * 255;  //%
 
-    // Serial.println("out");
-    // Serial.println(tmp);
     analogWrite(PWMOUT, tmp);
 }
 
 inline void setLongPeriodPWM(const double duty_percent, const unsigned long period_ms, const unsigned long now_ms) {
-    const double sati_duty = satirate(duty_percent, 100, 0);
+    const double sati_duty = constrain(duty_percent, 0, 100);
     int nowv = (now_ms % period_ms) * 100 / period_ms;
     digitalWrite(PWMOUT, nowv < sati_duty);
-    // Serial.println(nowv < duty_percent);
 }
 #endif

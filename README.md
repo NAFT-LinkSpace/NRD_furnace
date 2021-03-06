@@ -15,7 +15,7 @@
 ## 使用法
 
 ### 制御目標の設定
-[制御設定用ファイル](code/src/control_parametor.hpp)の関数targetFunctionを与えると設定できる。
+[制御設定用ファイル](code/src/control_parameter.hpp)の関数targetFunctionを与えると設定できる。
 * 例
     
     | 時刻[min] | 温度[℃] |     

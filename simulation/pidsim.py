@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
+# 同じインスタンスに伝達関数を入れると同じグラフに出してくれる
 class PlotManager:
     def __init__(self):
         _fig, self.ax = plt.subplots()
@@ -27,7 +28,7 @@ class PlotManager:
 
 
 def printhelper(tag, s):
-    print(tag, ":", s, ",")
+    print(tag, "=", s, ";")
 
 
 # Cs:control TranferFunction
@@ -70,13 +71,16 @@ def simulate(Cs, Ps, Gs, target_input_tf, trange, title_prefix):
 def main():
     resistance_ohm = 57.3
     satirated_temperature_cels = 150
+    atmosphere_temperature_cels = 20
     L_delayed_s = 40  # 遅れ時間
     temp_tau_s = 2000  # 全体を1次遅れとして見たときの時定数
 
     tau_s = temp_tau_s - L_delayed_s  # 時定数
 
     input_to_system_W = 100 ** 2 / resistance_ohm
-    A_target_gain = satirated_temperature_cels / input_to_system_W
+    A_target_gain = (
+        satirated_temperature_cels - atmosphere_temperature_cels
+    ) / input_to_system_W
 
     # https://ja.wikipedia.org/wiki/PID%E5%88%B6%E5%BE%A1#CHR%E6%B3%95
 
@@ -117,4 +121,5 @@ def main():
     plt.show()
 
 
+# execute main function
 main()

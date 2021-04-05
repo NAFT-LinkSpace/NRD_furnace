@@ -72,7 +72,7 @@ def main():
     resistance_ohm = 57.3
     satirated_temperature_cels = 150
     atmosphere_temperature_cels = 20
-    L_delayed_s = 40  # 遅れ時間
+    L_delayed_s = 400  # 遅れ時間
     temp_tau_s = 2000  # 全体を1次遅れとして見たときの時定数
 
     tau_s = temp_tau_s - L_delayed_s  # 時定数

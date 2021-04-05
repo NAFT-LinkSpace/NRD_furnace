@@ -8,9 +8,10 @@ constexpr double MAX_OUTPUT_ENERGY_W = 200;  //[J/s]
 constexpr unsigned long PWM_PERIOD_ms = 300;
 
 // PID gain
-constexpr double Kp = 39.468385018123236;
-constexpr double Ki = 0.02013693113169553;
-constexpr double Kd = 789.3677003624647;
+
+constexpr double Kp = 3.2219089810712846;
+constexpr double Ki = 0.0020136931131695527;
+constexpr double Kd = 644.381796214257;
 
 struct inflectionPoint {
     double time_s;

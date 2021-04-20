@@ -4,14 +4,14 @@
 
 #include <Arduino.h>
 
-constexpr double MAX_OUTPUT_ENERGY_W = 200;  //[J/s]
+constexpr double MAX_OUTPUT_ENERGY_W = 469.48;  //[J/s]
 constexpr unsigned long PWM_PERIOD_ms = 300;
 
 // PID gain
 
-constexpr double Kp = 3.2219089810712846;
-constexpr double Ki = 0.0020136931131695527;
-constexpr double Kd = 644.381796214257;
+constexpr double Kp = 61.56308677317081;
+constexpr double Ki = 0.030781543386585404;
+constexpr double Kd = 1569.8587127158557;
 
 struct inflectionPoint {
     double time_s;

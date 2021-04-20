@@ -69,13 +69,13 @@ def simulate(Cs, Ps, Gs, target_input_tf, trange, title_prefix):
 
 
 def main():
-    resistance_ohm = 57.3
+    resistance_ohm = 29.4
     satirated_temperature_cels = 150
     atmosphere_temperature_cels = 20
-    L_delayed_s = 400  # 遅れ時間
-    temp_tau_s = 2000  # 全体を1次遅れとして見たときの時定数
+    L_delayed_s = 51  # 遅れ時間
+    temp_tau_s = 2000  # 1次遅れの時定数
 
-    tau_s = temp_tau_s - L_delayed_s  # 時定数
+    tau_s = temp_tau_s  # 時定数
 
     input_to_system_W = 100 ** 2 / resistance_ohm
     A_target_gain = (

@@ -31,6 +31,14 @@ def printhelper(tag, s):
     print(tag, "=", s, ";")
 
 
+def printlikeC(type_, tag, s):
+    print(type_, tag, "=", s, ";")
+
+
+def print_constexprdouble_C(tag, s):
+    printlikeC("constexpr double", tag, s)
+
+
 # Cs:control TranferFunction
 # Ps:target TranferFunction
 # Gs:total TranferFunction
@@ -69,12 +77,14 @@ def simulate(Cs, Ps, Gs, target_input_tf, trange, title_prefix):
 
 
 def main():
-    resistance_ohm = 29.4
+
     satirated_temperature_cels = 150
     atmosphere_temperature_cels = 20
+
+    # 炉の性能
+    resistance_ohm = 29.4
     L_delayed_s = 51  # 遅れ時間
     temp_tau_s = 2000  # 1次遅れの時定数
-
     tau_s = temp_tau_s  # 時定数
 
     input_to_system_W = 100 ** 2 / resistance_ohm
@@ -92,13 +102,12 @@ def main():
     Ki = Kp / Ti
     Kd = Kp * Td
 
-    printhelper("input_to_system_W", input_to_system_W)
+    print_constexprdouble_C("MAX_OUTPUT_ENERGY_W", input_to_system_W)
+    print_constexprdouble_C("Kp", Kp)
+    print_constexprdouble_C("Ki", Ki)
+    print_constexprdouble_C("Kd", Kd)
+
     printhelper("A_target_gain", A_target_gain)
-
-    printhelper("Kp", Kp)
-    printhelper("Ki", Ki)
-    printhelper("Kd", Kd)
-
     # Cs = Kp + Ki / s + Kd * s
     Cs = matlab.tf([Kd, Kp, Ki], [1, 0])
     # Ps = A / (tau_s * s +1)
@@ -122,4 +131,5 @@ def main():
 
 
 # execute main function
+print("\n")
 main()

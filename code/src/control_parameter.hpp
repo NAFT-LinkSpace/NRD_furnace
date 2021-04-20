@@ -18,35 +18,24 @@ struct inflectionPoint {
     double temp_cels;
 };
 
-static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {10 * 60, 40}, {20 * 60, 40}, {30 * 60, 20}};
-// static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {20 * 2, 40}, {30 * 2, 40}, {50 * 2, 20}};
+static constexpr inflectionPoint inflectionpoint_s[] = {{0, 20}, {30 * 60, 80}, {60 * 60, 80}, {82.5 * 60, 125}, {162.5 * 60, 125}};
+static constexpr int inflectionPointSize = sizeof(inflectionpoint_s) / sizeof(inflectionPoint);
 
-// , {0, 80}, {0, 80}, {0, 0}, {0, 0}};
 inline double linear(const inflectionPoint pre, const inflectionPoint next, const double etime_s) {
-    return map(etime_s - pre.time_s, pre.time_s, next.time_s, pre.temp_cels, next.temp_cels);
+    return (next.temp_cels - pre.temp_cels) / (next.time_s - pre.time_s) * etime_s;
 }
 
 inline double targetFunction(const double elapsed_time_s, bool& is_end) {
     is_end = false;
     if (elapsed_time_s < inflectionpoint_s[0].time_s) {
-        return 0;
+        return 0.0;
     }
-    if (elapsed_time_s < inflectionpoint_s[1].time_s) {
-        // return inflectionpoint_s[1].temp_cels;
-        return linear(inflectionpoint_s[0], inflectionpoint_s[1], elapsed_time_s);
+    for (int i = 1; i < inflectionPointSize; i++) {
+        if (elapsed_time_s < inflectionpoint_s[i].time_s) {
+            return linear(inflectionpoint_s[i - 1], inflectionpoint_s[i], elapsed_time_s);
+        }
     }
-    if (elapsed_time_s < inflectionpoint_s[2].time_s) {
-        return linear(inflectionpoint_s[1], inflectionpoint_s[2], elapsed_time_s);
-    }
-    if (elapsed_time_s < inflectionpoint_s[3].time_s) {
-        return linear(inflectionpoint_s[2], inflectionpoint_s[3], elapsed_time_s);
-    }
-    // if (elapsed_time_s < inflectionpoint_s[4].time_s) {
-    //     return (inflectionpoint_s[4].temp_cels - inflectionpoint_s[3].temp_cels) / (inflectionpoint_s[4].time_s - inflectionpoint_s[3].time_s) + inflectionpoint_s[4].temp_cels;
-    // }
-    // if (elapsed_time_s < inflectionpoint_s[5].time_s) {
-    //     return inflectionpoint_s[5].temp_cels;
-    // }
+
     is_end = true;
     return 0.0;
 }

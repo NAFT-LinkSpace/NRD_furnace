@@ -19,7 +19,8 @@ class State {
 };
 
 class Control : public State {
-    VelocityPID vpid;
+   private:
+    VelocityPID pid;
     bool is_control_finished = false;
     unsigned long control_start_ms_;
     double skip_time_s_;
@@ -28,8 +29,8 @@ class Control : public State {
     Control() {
         is_control_finished = false;
         skip_time_s_ = 0.0;
-        vpid.init();
-        vpid.setGain(Kp, Ki, Kd);
+        pid.init();
+        pid.setGain(Kp, Ki, Kd);
     }
 
     void setOutput(OutputContainer& out, const CommonContainer common) override {
@@ -45,7 +46,7 @@ class Control : public State {
     }
 
     void startControl(const unsigned long start_ms, const double skip_time_s) {
-        vpid.init();
+        pid.init();
         is_control_finished = false;
         control_start_ms_ = start_ms;
         skip_time_s_ = skip_time_s;
@@ -60,7 +61,9 @@ class Control : public State {
             return 0.0;
         }
         const double error = target_temp - feedbackTemperature(T0, T1, T2, elasped_time_s);  //error:target - current
-        const double out_W = vpid.output(error, elasped_time_s);
+        const double out_W = pid.output(error, elasped_time_s);
+
+        pid.setPreMV(constrain(out_W, 0.0, MAX_OUTPUT_ENERGY_W));
         const double duty_per = constrain(out_W / MAX_OUTPUT_ENERGY_W * 100, 0, 100);
 
         control_data +=
@@ -74,6 +77,7 @@ class Control : public State {
 };
 
 class ConstPWM : public State {
+   private:
     double duty_per_;
 
    public:

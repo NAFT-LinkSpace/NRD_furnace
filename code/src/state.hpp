@@ -53,8 +53,8 @@ class Control : public State {
     }
 
    private:
-    double dutyPer(const unsigned long now_ms, const double T0, const double T1, const double T2, String& control_data) {
-        const double elasped_time_s = (now_ms - control_start_ms_) / 1e3 - skip_time_s_;
+    const double dutyPer(const unsigned long now_ms, const double T0, const double T1, const double T2, String& control_data) {
+        const double elasped_time_s = (now_ms - control_start_ms_) / 1e3 + skip_time_s_;
         const double target_temp = targetFunction(elasped_time_s, is_control_finished);
 
         if (is_control_finished) {

@@ -13,12 +13,9 @@ class Temperature {
     Adafruit_MAX31855 themocouple2;
 
    public:
-    // double T0, T1, T2;
-
     Temperature();
     void begin();
     void update(double&, double&, double&);
-    // String toString(const String delim = ",");
 };
 
 #endif

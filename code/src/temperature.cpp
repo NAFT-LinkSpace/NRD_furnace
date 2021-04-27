@@ -21,6 +21,3 @@ void Temperature::update(double& T0, double& T1, double& T2) {
     T1 = removeNan(themocouple1.readCelsius(), T1);
     T2 = removeNan(themocouple2.readCelsius(), T2);
 }
-// String Temperature::toString(const String delim) {
-//     return String(T0) + delim + String(T1) + delim + String(T2);
-// }

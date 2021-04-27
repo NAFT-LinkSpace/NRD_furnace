@@ -40,8 +40,6 @@ class VelocityPID {
     }
     void setPreMV(const double pre_MV) {
         pre_MV_ = pre_MV;
-        // delay(100);
-        // Serial.println(pre_MV_);
     }
 
    private:

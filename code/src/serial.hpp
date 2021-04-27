@@ -7,10 +7,7 @@
 
 void setupSerial(const unsigned long baud = 19200);
 String readSerial();
-// void readSerialhelper();
 
-// void writeSerial(const String str);
 void rmCRLF(String& s);
-
 
 #endif

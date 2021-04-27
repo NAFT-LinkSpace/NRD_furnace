@@ -43,7 +43,6 @@ class Context {
             changeState(constpwm_);
 
         } else if (parsed.operator_ == keyword::START_CONTROL) {
-            // out.control_on = true;
             if (parsed.operand_size == 0) {
                 control_.startControl(input.common_.now_ms, 0.0);
 

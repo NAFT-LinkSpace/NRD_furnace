@@ -6,9 +6,7 @@ void setupSerial(const unsigned long baud) {
 
 // SerialからStringもらう
 String readSerial() {
-    // String buf[buflen];
-
-    if (Serial.available() == 0) {
+        if (Serial.available() == 0) {
         return "";
     }
 
@@ -27,6 +25,3 @@ void rmCRLF(String& s) {
         s = s.substring(0, s.length() - 1);
     }
 }
-// void writeSerial_ln(const String str) {
-//     Serial.println(str);
-// }

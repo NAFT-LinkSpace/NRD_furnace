@@ -5,9 +5,16 @@
 class StringQueue {
    private:
     String load;
+    String header_;
     bool isfilted;
 
    public:
+    StringQueue() {
+        header_ = "";
+    }
+    StringQueue(const String& header) {
+        header_ = header;
+    }
     void push(const String s) {
         if (isfilted) {
             load += s;
@@ -26,13 +33,10 @@ class StringQueue {
     const unsigned int strlen() {
         return load.length();
     }
-    void println(const String& header) {
-        if (isfilted) {
-            Serial.println(header + load);
-        }
-    }
     void println() {
-        println("");
+        if (isfilted && load.length() != 0) {
+            Serial.println(header_ + load);
+        }
     }
 };
 extern StringQueue error_queue;

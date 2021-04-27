@@ -72,13 +72,13 @@ class Context {
         error_queue.filter(true);
         prompt_queue.filter(true);
 
+        normal_queue.push(input.message);
+        normal_queue.push(input.common_.toString());
         parseInput(input);
+        normal_queue.push(state_->toString());
         state_->setOutput(input.common_);
 
-        if (input.message.length() != 0) {
-            Serial.println("\"" + input.message + "\"");
-        }
-        error_queue.println("ERROR");
+        error_queue.println();
         prompt_queue.println();
         normal_queue.println();
     }

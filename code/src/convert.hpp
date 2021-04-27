@@ -10,7 +10,6 @@
 class Context {
    private:
     Parser<10> parser_;
-    OutputContainer out_;
 
     Control control_;
     ConstPWM constpwm_;
@@ -29,7 +28,7 @@ class Context {
         // out_.prompt += input.toString();
 
         if (!parsed.parsable) {
-            out_.error += "not parsable";
+            error_queue.push(toStringHelper("not parsable", input.message));
             return;
         }
 
@@ -38,7 +37,7 @@ class Context {
                 constpwm_.setDuty(parsed.operand[0]);
 
             } else {
-                out_.error += "not parsable";
+                error_queue.push(toStringHelper("not parsable", input.message));
                 return;
             }
             changeState(constpwm_);
@@ -52,7 +51,7 @@ class Context {
                 control_.startControl(input.common_.now_ms, parsed.operand[0]);
 
             } else {
-                out_.error += "not parsable";
+                error_queue.push(toStringHelper("not parsable", input.message));
                 return;
             }
 
@@ -65,23 +64,23 @@ class Context {
         changeState(constpwm_);
     }
     void update(const InputContainer& input) {
-        out_.init();
+        normal_queue.clear();
+        error_queue.clear();
+        prompt_queue.clear();
+
+        normal_queue.filter(input.common_.now_ms % 1000 < 5);
+        error_queue.filter(true);
+        prompt_queue.filter(true);
+
         parseInput(input);
-        state_->setOutput(out_, input.common_);
+        state_->setOutput(input.common_);
 
-        if (out_.error.length() != 0) {
-            Serial.println(toStringHelper("error", out_.error));
-        }
         if (input.message.length() != 0) {
-            Serial.println(toStringHelper("message", "\"" + input.message + "\""));
+            Serial.println("\"" + input.message + "\"");
         }
-        if (input.common_.now_ms % 1000 < 5) {
-            // Serial.print(input.toString());
-            Serial.print(input.common_.toString());
-            Serial.print(out_.message);
-
-            Serial.println();
-        }
+        error_queue.println("ERROR");
+        prompt_queue.println();
+        normal_queue.println();
     }
 };
 void convert(const InputContainer& input);

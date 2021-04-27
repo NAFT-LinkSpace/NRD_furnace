@@ -6,6 +6,7 @@
 #include "container.hpp"
 #include "control_parameter.hpp"
 #include "pincontrol.hpp"
+#include "queue.hpp"
 #include "serial.hpp"
 
 class State {
@@ -14,7 +15,7 @@ class State {
         pinControlBegin();
     }
 
-    virtual void setOutput(OutputContainer& out, const CommonContainer common) = 0;
+    virtual void setOutput(const CommonContainer common) = 0;
     virtual const String toString() const = 0;
 };
 
@@ -33,11 +34,12 @@ class Control : public State {
         pid.setGain(Kp, Ki, Kd);
     }
 
-    void setOutput(OutputContainer& out, const CommonContainer common) override {
-        out.message += toString();
-        const double duty_per = dutyPer(common.now_ms, common.current_tempT0, common.current_tempT1, common.current_tempT2, out.message);
-        out.message += toStringHelper("duty[%]", duty_per);
-        out.message += is_control_finished ? "control is end" : "";
+    void setOutput(const CommonContainer common) override {
+        normal_queue.push(toString());
+
+        const double duty_per = dutyPer(common.now_ms, common.current_tempT0, common.current_tempT1, common.current_tempT2);
+
+        normal_queue.push(is_control_finished ? "control is end" : "");
         setLongPeriodPWM(duty_per, PWM_PERIOD_ms, common.now_ms);
     }
 
@@ -53,7 +55,7 @@ class Control : public State {
     }
 
    private:
-    const double dutyPer(const unsigned long now_ms, const double T0, const double T1, const double T2, String& control_data) {
+    const double dutyPer(const unsigned long now_ms, const double T0, const double T1, const double T2) {
         const double elasped_time_s = (now_ms - control_start_ms_) / 1e3 + skip_time_s_;
         const double target_temp = targetFunction(elasped_time_s, is_control_finished);
 
@@ -66,11 +68,11 @@ class Control : public State {
         pid.setPreMV(constrain(out_W, 0.0, MAX_OUTPUT_ENERGY_W));
         const double duty_per = constrain(out_W / MAX_OUTPUT_ENERGY_W * 100, 0, 100);
 
-        control_data +=
+        normal_queue.push(
             toStringHelper("elasped[s]", elasped_time_s) +
             toStringHelper("e(t)", error) +
             toStringHelper("target[Cels]", target_temp) +
-            toStringHelper("heat out[W]", out_W);
+            toStringHelper("heat out[W]", out_W));
 
         return duty_per;
     }
@@ -84,9 +86,7 @@ class ConstPWM : public State {
     ConstPWM() {
         duty_per_ = 0.0;
     }
-    void setOutput(OutputContainer& out, const CommonContainer common) override {
-        out.message += toString();
-        out.message += toStringHelper("duty[%]", duty_per_);
+    void setOutput(const CommonContainer common) override {
         setLongPeriodPWM(duty_per_, PWM_PERIOD_ms, common.now_ms);
     }
     void setDuty(const double duty_per) {

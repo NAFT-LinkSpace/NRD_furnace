@@ -63,9 +63,9 @@ class Control : public State {
             return 0.0;
         }
         const double error = target_temp - feedbackTemperature(T0, T1, T2, elasped_time_s);  //error:target - current
-        const double out_W = pid.output(error, elasped_time_s);
+        const double out_W = constrain(pid.output(error, elasped_time_s), 0.0, MAX_OUTPUT_ENERGY_W);
 
-        pid.setPreMV(constrain(out_W, 0.0, MAX_OUTPUT_ENERGY_W));
+        pid.setPreMV(out_W);
         const double duty_per = constrain(out_W / MAX_OUTPUT_ENERGY_W * 100, 0, 100);
 
         normal_queue.push(

@@ -26,13 +26,13 @@ class StringQueue {
     const unsigned int strlen() {
         return load.length();
     }
-    void print(const String& header) {
+    void println(const String& header) {
         if (isfilted) {
             Serial.println(header + load);
         }
     }
-    void print() {
-        print("");
+    void println() {
+        println("");
     }
 };
 extern StringQueue error_queue;

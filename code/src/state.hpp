@@ -35,8 +35,7 @@ class Control : public State {
     }
 
     void setOutput(const CommonContainer common) override {
-        normal_queue.push(toString());
-
+        
         const double duty_per = dutyPer(common.now_ms, common.current_tempT0, common.current_tempT1, common.current_tempT2);
 
         normal_queue.push(is_control_finished ? "control is end" : "");

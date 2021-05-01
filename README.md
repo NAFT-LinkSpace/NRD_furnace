@@ -158,7 +158,7 @@ now_ms:1143003, current temp T0:22.3,T1:23.0,T2:0.0,State:Control, elasped[s]:1.
 ## 回路
 
 熱電対を接続し制御対象の温度を測定する。
-SSR に繋がったフォトトライアックに PWM を入力し電熱線で制御対象を加熱する。[ピン設定用ファイル](code/src/pin.hpp)で熱電対センサの SPI と PWM 出力のピンアサインを変更可能。[shield/shield.fzz](shield/shield.fzz)に Arduino のシールドを熱電対センサと PWM 用のピンをのせている。
+SSR に繋がったフォトトライアックに PWM を入力し電熱線で制御対象を加熱する。[ピン設定用ファイル](code/src/pin.hpp)で熱電対センサの SPI と PWM 出力のピンアサインを変更可能。[circuit/shield.fzz](circuit/shield.fzz)に Arduino のシールドを熱電対センサと PWM 用のピンをのせている。
 
 ## 設計
 
